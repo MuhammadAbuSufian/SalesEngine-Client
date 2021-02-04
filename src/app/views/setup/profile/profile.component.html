@@ -1,0 +1,89 @@
+
+
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-12">
+      <mat-card class="example-card">
+        <mat-card-title><h4  class="card-title">Profile</h4></mat-card-title>
+
+        <mat-card-content >
+          <div class="row">
+            <div class="col-md-6" style="margin-bottom: 10px">
+              <div class="row">
+                <div class="col-md-4">
+                  Email:
+                </div>
+                <input class="col-md-8 form-control" [(ngModel)]="storageService.userSession.Email" disabled>
+              </div>
+            </div>
+            <div class="col-md-6"  style="margin-bottom: 10px">
+              <div class="row">
+                <div class="col-md-4">
+                  Name:
+                </div>
+                <input class="col-md-8 form-control" [(ngModel)]="storageService.userSession.Name"  disabled>
+              </div>
+            </div>
+            <div class="col-md-6"  style="margin-bottom: 10px">
+              <div class="row">
+                <div class="col-md-4">
+                  Address:
+                </div>
+                <input class="col-md-8 form-control"  [(ngModel)]="storageService.userSession.Address"  disabled>
+              </div>
+            </div>
+            <div class="col-md-6"  style="margin-bottom: 10px">
+              <div class="row">
+                <div class="col-md-4">
+                  Role:
+                </div>
+                <input class="col-md-8 form-control"  [(ngModel)]="storageService.userSession.Role.Name"  disabled>
+              </div>
+            </div>
+            <div class="col-md-6"  style="margin-bottom: 10px">
+              <div class="row">
+                <div class="col-md-4">
+                  Old Password:
+                </div>
+                <input class="col-md-8 form-control" type="password" [(ngModel)]="oldPassword"  >
+              </div>
+            </div>
+            <div class="col-md-6"  style="margin-bottom: 10px">
+              <div class="row">
+                <div class="col-md-4">
+                  NewPassword:
+                </div>
+                <input class="col-md-8 form-control" type="password" [(ngModel)]="newPassword"  >
+              </div>
+            </div>
+            <div class="col-md-12"  style="margin-bottom: 10px">
+              <br>
+              <div class="row">
+                <div class="col-md-10">
+                </div>
+                <button class="col-md-2 btn btn-primary pull-right" (click)="changePassword()" [disabled]="oldPassword == '' || newPassword == ''">Change Password</button>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

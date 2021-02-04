@@ -1,0 +1,43 @@
+// If you want to override variables do it here
+@import "variables";
+
+// Import styles
+@import "node_modules/@coreui/coreui/scss/coreui";
+
+// If you want to add something do it here
+@import "custom";
+
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "~ngx-smart-modal/ngx-smart-modal";
+
+.table th, .table td {
+  padding: 5px;
+}
+
+.ngx-datepicker-container{
+  z-index: 99999999 !important;
+}
+.barcode{
+  display: none;
+}
+
+//input.ng-invalid.ng-touched{
+//  border: 1px solid #E91E63;
+//}
+
+@media print
+{
+  .barcode
+  {
+    display: block !important;
+  }
+  .nsm-dialog-btn-close{
+    display: none;
+  }
+}
+
+footer{
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-top: 10px;
+}

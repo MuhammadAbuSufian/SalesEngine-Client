@@ -1,0 +1,133 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-12">
+      <mat-card class="example-card">
+        <mat-card-title>
+          <h4  class="card-title">
+            <span *ngIf="create">Add New Customer</span>
+            <span *ngIf="!create">Update Customer</span>
+            <button *ngIf="!create" class="btn btn-outline-success btn-sm ml-2"  (click)="addTrue()">
+              <svg style="font-size: 17px" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+              </svg>
+            </button>
+          </h4>
+        </mat-card-title>
+        <mat-card-content>
+          <div class="row">
+            <div class="col-md-12">
+
+              <div class="row">
+                <div class="col-md-4">
+                  <form name="form" (ngSubmit)="saveNewCustomer(f)" #f="ngForm" id="addCustomer">
+                    <mat-form-field class="example-full-width" >
+                      <input matInput placeholder="Customer Name"
+                             id="name"
+                             [(ngModel)]="customer.Name"
+                             name="companyName"
+                             required
+                      >
+                    </mat-form-field>
+                    <mat-form-field class="example-full-width">
+                      <input matInput placeholder="Phone"
+                             [(ngModel)]="customer.Phone"
+                             name="Representative"
+                             required
+                      >
+                    </mat-form-field>
+                    <mat-form-field class="example-full-width">
+                      <input matInput placeholder="Address"
+                             [(ngModel)]="customer.Address"
+                             name="RepContact"
+                      >
+                    </mat-form-field>
+                    <button type="submit"  class="pull-right" mat-raised-button color="primary" >
+                      <span *ngIf="create">Save</span>
+                      <span *ngIf="!create">Update</span>
+                    </button>
+                  </form>
+                </div>
+                <div class="col-md-8" style="border-left: 1px solid #c8ced3">
+
+                  <div class="row">
+                    <div class="col-sm-5">
+                      <div class="input-group mb-3">
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Search ..."
+                          aria-label="Recipient's username"
+                          aria-describedby="basic-addon2"
+                          [(ngModel)]="gridRequestModel.Keyword"
+                          (keyup.enter)="search()"
+                        >
+                        <div class="input-group-append">
+                          <button class="btn btn-outline-success" type="button"  (click)="search()" ><i class="icon-magnifier icons "></i></button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-7 mb-3">
+                      <div class="input-group">
+                        <select class="custom-select" [(ngModel)]="gridRequestModel.OrderBy">
+                          <option selected value="">Sort By ...</option>
+                          <option value="Name">Name</option>
+
+                        </select>
+                        <select class="custom-select" [(ngModel)]="gridRequestModel.IsAscending">
+                          <option selected value="">Sort Type ...</option>
+                          <option value="True">ASC</option>
+                          <option value="False">DESC</option>
+                        </select>
+                        <div class="input-group-append">
+                          <button class="btn btn-outline-success" type="button"   (click)="getCustomer()"><i class="icon-refresh icons "></i></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                      <thead class="thead-light">
+                      <tr>
+                        <th scope="col" style="width: 2%; text-align: center;">#</th>
+                        <th scope="col" >Name</th>
+                        <th scope="col" >Phone</th>
+                        <th scope="col" >Address</th>
+                        <th scope="col" >Action</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let com of customerList; let i = index">
+                        <td scope="col" style="width: 2%; text-align: center;">{{i+1}}</td>
+                        <td scope="col" >{{com.Name}}</td>
+                        <td scope="col">{{com.Phone}}</td>
+                        <td scope="col" >{{com.Address}}</td>
+                        <td scope="col" >
+                          <button type="button"
+                                  class="btn btn-info btn-sm mb-1 cus-btn-grp-mar"
+                                  (click)="setEdit(i)"
+                                  style="font-size: 10px"
+                          >
+                            <i class="icon-note icons"></i>
+                          </button>
+                        </td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div>
+                    <ul style="list-style: none">
+                      <li *ngFor="let item of totalRecord | paginate: { itemsPerPage: gridRequestModel.PerPageCount, currentPage:  gridRequestModel.Page }">  </li>
+                    </ul>
+                    <pagination-controls (pageChange)="onPageChange($event)"></pagination-controls>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+

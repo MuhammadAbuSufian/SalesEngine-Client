@@ -1,0 +1,152 @@
+
+<div class="animated fadeIn d-print-none">
+  <div class="row">
+    <div class="col-md-12">
+      <mat-card class="example-card">
+        <mat-card-title><h4  class="card-title">Inventory</h4></mat-card-title>
+        <mat-card-content>
+          <div class="row">
+            <div class="col-md-12">
+
+              <div class="row">
+                <div class="col-sm-5">
+                  <div class="input-group mb-3">
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Search ..."
+                      aria-label="Recipient's username"
+                      aria-describedby="basic-addon2"
+                      [(ngModel)]="gridRequestModel.Keyword"
+                      (keyup)="searchCheck()"
+                      (keyup.enter)="search()"
+                    >
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-success" type="button"  (click)="search()" ><i class="icon-magnifier icons "></i></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-7 mb-3">
+                  <div class="input-group">
+                    <select class="custom-select" [(ngModel)]="gridRequestModel.OrderBy">
+                      <option selected value="">Sort By ...</option>
+                      <option value="Name">Name</option>
+
+                    </select>
+                    <select class="custom-select" [(ngModel)]="gridRequestModel.IsAscending">
+                      <option selected value="">Sort Type ...</option>
+                      <option value="True">ASC</option>
+                      <option value="False">DESC</option>
+                    </select>
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-success" type="button"   (click)="getProduct()"><i class="icon-refresh icons "></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                  <thead class="thead-light">
+                  <tr>
+                    <th scope="col" style="width: 2%; text-align: center;">#</th>
+                    <th scope="col" >Name</th>
+                    <th scope="col" >CostPrice</th>
+                    <th scope="col" >SellingPrice </th>
+                    <th scope="col" >Power</th>
+                    <th scope="col" >Stock</th>
+                    <th scope="col" >Group</th>
+                    <th scope="col" >Company</th>
+                    <th scope="col" >Actions</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let prod of productList; let i = index">
+                    <td scope="col" style="width: 2%; text-align: center;">{{i+1}}</td>
+                    <td scope="col" >{{prod.Name}}</td>
+                    <td scope="col">{{prod.CostPrice}}</td>
+                    <td scope="col" >{{prod.SellingPrice}}</td>
+                    <td scope="col" >{{prod.Power}}</td>
+                    <td scope="col" >{{prod.Stock}}</td>
+                    <td scope="col" >{{prod.Group.Name}}</td>
+                    <td scope="col" >{{prod.Brand.Name}}</td>
+                    <td scope="col" class="text-center">
+                      <button type="button"
+                              class="btn btn-info btn-sm mb-1 cus-btn-grp-mar"
+                              (click)="setUpdateStock(i);inventoryUpdateModal.open()"
+                              style="font-size: 10px"
+                      >
+                        <i class="fa fa-plus-circle"></i>
+                      </button>
+                      <button mat-icon-button color="primary" style="margin-top: -5px;" (click)="print(i, true)">
+                        <mat-icon>print</mat-icon>
+                      </button>
+                      <button mat-icon-button color="primary" style="margin-top: -5px;" (click)="print(i, false)">
+                        <mat-icon>book</mat-icon>
+                      </button>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                <ul style="list-style: none">
+                  <li *ngFor="let item of totalRecord | paginate: { itemsPerPage: gridRequestModel.PerPageCount, currentPage:  gridRequestModel.Page }">  </li>
+                </ul>
+                <pagination-controls (pageChange)="onPageChange($event)"></pagination-controls>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+
+
+      </mat-card>
+    </div>
+  </div><!--/.row-->
+</div>
+
+
+<ngx-smart-modal #inventoryUpdateModal identifier="myModal">
+  <h4>Stock Update</h4>
+  <hr>
+  <div class="row">
+    <div class="col-md-4">
+      <p>Medicine Name: </p>
+      <p>Current Stock:  </p>
+      <p>Add Stock:  </p>
+    </div>
+    <div class="col-md-4">
+      <p>{{product.Name}} </p>
+      <p>{{product.Stock}}</p>
+      <input [(ngModel)]="addStock" type="number" class="form-control" style="max-width: 100px">
+    </div>
+  </div>
+
+  <hr>
+  <button class="pull-right btn btn-success" (click)="updateStock(inventoryUpdateModal)" >Update</button>
+</ngx-smart-modal>
+
+
+
+
+<div *ngIf="printItem!=undefined" class="d-print-block barcode" style="margin-top:-35px;height:100px; width:200px; margin-bottom: 200px">
+  <p style="text-align: center;font-size: 18px; font-weight: bold;margin-bottom: 0px; margin-top: 35px">{{printItem.Name}}</p>
+  <p *ngIf="!printBarcode" style="text-align: center; font-weight: bold; font-size: 26px; margin-bottom: 0px;">
+    <span>Price: {{printItem.DiscountPrice}} Tk</span>
+  </p>
+  <p style="text-align: center; font-weight: bold; font-size: 26px; margin-bottom: 0px;">
+    <span *ngIf="printBarcode">Price: {{printItem.SellingPrice}} Tk</span>
+    <span *ngIf="!printBarcode" >
+      <span *ngIf="printItem.SellingPrice != printItem.DiscountPrice">
+            Price: <span style="text-decoration:   line-through">{{printItem.SellingPrice}} Tk</span>
+      </span>
+    </span>
+  </p>
+
+  <ngx-barcode *ngIf="printBarcode" style="height:100px; width:200px;margin-bottom: 200px" [bc-value]="printItem.BarCodeNo" [bc-display-value]="true"></ngx-barcode>
+</div>
+
+
+
+
+
+

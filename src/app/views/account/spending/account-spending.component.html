@@ -1,0 +1,132 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-12">
+      <mat-card class="example-card">
+        <mat-card-title>
+          <h4  class="card-title">
+            <span >Account Spending </span>
+          </h4>
+        </mat-card-title>
+        <mat-card-content>
+          <div class="row">
+            <div class="col-md-12">
+
+              <div class="row">
+
+                <div class="col-md-12" >
+                  <div class="row">
+                    <div class="col-md-8">
+                      <div class="input-group" >
+                        <!--<input type="date" class="form-control" placeholder="">-->
+                        <ng-datepicker  [(ngModel)]="start" style="z-index: 01"></ng-datepicker>
+
+                        <div class="input-group-prepend">
+                          <span  class="input-group-text" style="max-height: 33px">to</span>
+                        </div>
+                        <!--<input type="date" class="form-control" placeholder="">-->
+                        <ng-datepicker   [(ngModel)]="end" style="z-index: 01"></ng-datepicker>
+                        <div class="input-group-append">
+                          <button class="btn btn-outline-success"  style="max-height: 33px" type="button"   (click)="getJournal()"><i class="icon-refresh icons "></i></button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <span style="float:right; background: #e0dca2; padding: 7px;border-radius: 5px;">Total Spending: ৳ {{totalSpending}}</span>
+                    </div>
+                  </div>
+                  <br>
+<!--                  <div class="row">-->
+
+<!--                    <div class="col-sm-5">-->
+<!--                      <div class="input-group mb-3">-->
+<!--                        <input-->
+<!--                          type="text"-->
+<!--                          class="form-control"-->
+<!--                          placeholder="Search ..."-->
+<!--                          aria-label="Recipient's username"-->
+<!--                          aria-describedby="basic-addon2"-->
+<!--                          [(ngModel)]="gridRequestModel.Keyword"-->
+<!--                          (keyup.enter)="search()"-->
+<!--                        >-->
+<!--                        <div class="input-group-append">-->
+<!--                          <button class="btn btn-outline-success" type="button"  (click)="search()"  ><i class="icon-magnifier icons "></i></button>-->
+<!--                        </div>-->
+<!--                      </div>-->
+<!--                    </div>-->
+<!--                    <div class="col-sm-7 mb-3">-->
+<!--                      <div class="input-group">-->
+<!--                        <select class="custom-select" [(ngModel)]="gridRequestModel.OrderBy">-->
+<!--                          <option selected value="">Sort By ...</option>-->
+<!--                          <option value="Name">Name</option>-->
+
+<!--                        </select>-->
+<!--                        <select class="custom-select" [(ngModel)]="gridRequestModel.IsAscending">-->
+<!--                          <option selected value="">Sort Type ...</option>-->
+<!--                          <option value="True">ASC</option>-->
+<!--                          <option value="False">DESC</option>-->
+<!--                        </select>-->
+<!--                        <div class="input-group-append">-->
+<!--                          <button class="btn btn-outline-success" type="button"   (click)="getJournal()"><i class="icon-refresh icons "></i></button>-->
+<!--                        </div>-->
+<!--                      </div>-->
+<!--                    </div>-->
+<!--                  </div>-->
+                  <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                      <thead class="thead-light">
+                      <tr>
+                        <th scope="col" style="width: 2%; text-align: center;">#</th>
+                        <th scope="col" >Journal Type</th>
+                        <th scope="col" >Amount</th>
+                        <th scope="col" >Note</th>
+                        <th scope="col" >Status</th>
+                        <th scope="col" >Submitted By</th>
+                        <th scope="col" >Submitted At</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let jnl of journalList; let i = index">
+                        <td scope="col" style="width: 2%; text-align: center;">{{i+1}}</td>
+                        <td scope="col" >{{jnl.JournalType.Name}}</td>
+                        <td scope="col" >{{jnl.Amount}}</td>
+                        <td scope="col" >{{jnl.Note}}</td>
+                        <td scope="col" >
+                          <span *ngIf="jnl.Status ==  0" class="badge badge-primary">Submitted</span>
+                          <span *ngIf="jnl.Status ==  1" class="badge badge-success">Approved</span>
+                          <span *ngIf="jnl.Status ==  2" class="badge badge-secondary">Paid</span>
+                        </td>
+                        <td scope="col" >{{jnl.SubmittedBy.Name}}</td>
+                        <td scope="col" >{{jnl.Created |date }}</td>
+
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div>
+                    <ul style="list-style: none">
+                      <li *ngFor="let item of totalRecord | paginate: { itemsPerPage: gridRequestModel.PerPageCount, currentPage:  gridRequestModel.Page }">  </li>
+                    </ul>
+                    <pagination-controls (pageChange)="onPageChange($event)"></pagination-controls>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,237 @@
+<style type="text/css">
+  .pos-table-input{
+    border: none;
+    background: #ceecdc52;
+    border-radius: 2px;
+  }
+  .mat-success {
+    background-color: #4dbd74;
+    font-weight: bold;
+    font-family: monospace;
+    color: #fff;
+  }
+</style>
+
+<div class="animated fadeIn d-print-none">
+  <div class="row">
+    <div class="col-md-12">
+      <mat-card class="example-card">
+        <mat-card-title><h4  class="card-title">New Sale</h4></mat-card-title>
+        <mat-card-content>
+          <div class="row">
+            <div class="col-md-8" *ngIf="!customerSearch"></div>
+            <div class="col-md-9" *ngIf="customerSearch"></div>
+
+            <div class="col-md-3">
+              <mat-form-field class="example-full-width" >
+                <input [disabled]="!customerSearch" matInput placeholder="Search By Name"  (keyup.enter)="getCustomer()" aria-label="Customer Name" [matAutocomplete]="customer" [(ngModel)]="customerKey">
+                <mat-autocomplete #customer="matAutocomplete" (optionSelected)="onSelectionChangedCustomer($event.option.value)">
+                  <mat-option *ngFor="let cus of customerList" [value]="cus.Name" >{{cus.Name}}</mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+            <div class="col-md-1">
+              <button mat-icon-button color="accent"  *ngIf="!customerSearch" (click)="deleteCustomer()"><mat-icon>clear</mat-icon></button>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+
+              <mat-form-field class="example-full-width">
+                <input matInput placeholder="Search By Medicine Name or Group" (keyup)="getMedicineCheck()"  (keyup.enter)="getMedicine()" aria-label="medicineGroup" [matAutocomplete]="medicine" [(ngModel)]="searchKey">
+                <mat-autocomplete #medicine="matAutocomplete" (optionSelected)="onSelectionChangedMedicine($event.option.value)">
+                  <mat-option *ngFor="let medicine of medicineList" [value]="medicine.Name" >
+                    <table width="100%">
+                      <tbody>
+                        <tr>
+                          <td  width="35%">{{medicine.Name}}</td>
+                          <td  width="10%">{{medicine.Power}}</td>
+                          <td  width="10%">{{medicine.Stock}}</td>
+                          <td  width="25%"> {{medicine.Brand.Name}}</td>
+                          <td  width="20%"> {{medicine.Group.Name}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+
+            </div>
+
+            <!--<div class="col-md-3">-->
+              <!--<mat-form-field class="example-full-width">-->
+                <!--<input matInput placeholder="Medicine Group"  (keyup)="getMedicineGroups()" aria-label="medicineGroup" [matAutocomplete]="group" [(ngModel)]="groupName">-->
+                <!--<mat-autocomplete #group="matAutocomplete" (optionSelected)="onSelectionChangedMedicineGroup($event.option.value)">-->
+                  <!--<mat-option *ngFor="let medicineGroup of medicineGroupList " [value]="medicineGroup.Name" >-->
+                    <!--{{ medicineGroup.Name }}-->
+                  <!--</mat-option>-->
+                <!--</mat-autocomplete>-->
+              <!--</mat-form-field>-->
+            <!--</div>-->
+            <!--<div class="col-md-3">-->
+              <!--<mat-form-field class="example-full-width">-->
+                <!--<input matInput placeholder="Company"  (keyup)="getCompany()" aria-label="company" [matAutocomplete]="company" [(ngModel)]="companyName">-->
+                <!--<mat-autocomplete  #company="matAutocomplete" (optionSelected)="onSelectionChangedCompany($event.option.value)">-->
+                  <!--<mat-option *ngFor="let company of companyList " [value]="company.Name" >-->
+                    <!--{{ company.Name }}-->
+                  <!--</mat-option>-->
+                <!--</mat-autocomplete>-->
+              <!--</mat-form-field>-->
+            <!--</div>-->
+          </div>
+          <div class="row"></div>
+          <!--<hr>-->
+          <div class="row">
+            <div class="col-md-9">
+              <table class="table table-sm">
+                <thead class="thead-light">
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th *ngIf="storageService.userSession.Pharmacy">Group</th>
+                  <th>Company</th>
+                  <th>Qty</th>
+                  <th>Price</th>
+                  <th *ngIf="storageService.userSession.SuperShop">D-Price</th>
+                  <th *ngIf="storageService.userSession.Pharmacy">Dis %</th>
+
+                  <th>Sub</th>
+                  <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of cartService.salesItem; let i = index ">
+                  <td>{{i+1}}</td>
+                  <td>{{item.Name}}</td>
+                  <td *ngIf="storageService.userSession.Pharmacy">{{item.Group.Name}}</td>
+                  <td>{{item.Brand.Name}}</td>
+                  <td><input class="pos-table-input" style="max-width: 40px" value="{{item.Qty}}" #itemQty (keyup)="updateQty(item.Id, itemQty.value)" ></td>
+                  <td><input class="pos-table-input" style="max-width: 50px" value="{{item.SellingPrice}}"  #itemPrice (keyup)="updatePrice(item.Id, itemPrice.value)" (focusout)="updatePriceOnFocusout(item.Id, itemPrice.value)" ></td>
+                  <td *ngIf="storageService.userSession.SuperShop"><input class="pos-table-input" style="max-width: 50px" value="{{item.DiscountPrice}}"  #itemPrice (keyup)="updatePrice(item.Id, itemPrice.value)" (focusout)="updatePriceOnFocusout(item.Id, itemPrice.value)" ></td>
+                  <td *ngIf="storageService.userSession.Pharmacy"><input disabled class="pos-table-input" style="max-width: 50px" value="{{item.DiscountPer}}" #itemDiscount (keyup)="updateDiscount(item.Id, itemDiscount.value)" (focusout)="updateDiscountOnFocusout(item.Id, itemDiscount.value)"></td>
+                  <td>{{ getSubtotal(item.DiscountPrice, item.Qty) | number}}</td>
+                  <td>
+                    <button mat-icon-button color="accent" style="margin-top: -5px;" (click)="removeItem(item.Id)">
+                      <mat-icon>clear</mat-icon>
+                    </button>
+                  </td>
+                </tr>
+
+                </tbody>
+              </table>
+            </div>
+            <div class="col-md-3 col-payment-info" style="max-height: 370px">
+              <div class="row">
+                <h5 class="col-md-6">Total: </h5>
+                <div class="col-md-6">
+                  <h5  style="text-align: right">{{cartService.total | number}} Tk</h5>
+                </div>
+              </div>
+
+              <div class="row">
+                <h5 class="col-md-6">Discount: </h5>
+                <div class="col-md-6">
+                  <h6 style="text-align: right">{{cartService.totalDiscount | number}}  Tk</h6>
+                </div>
+              </div>
+
+              <div class="row">
+                <h5 class="col-md-6">Vat: </h5>
+                <div class="col-md-6">
+                  <h6 style="text-align: right">{{cartService.vat | number}} </h6>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <h5 class="col-md-6">Payable: </h5>
+                <div class="col-md-6">
+                  <h5 style="text-align: right">{{cartService.total | number}}  Tk</h5>
+                </div>
+              </div>
+
+              <div class="row">
+                <h5 class="col-md-6">Paid Amount: </h5>
+                <div class="col-md-6" >
+                  <mat-form-field class="example-full-width">
+                    <input matInput [(ngModel)]="cartService.paidAmount" style="padding: 5px; background: #769193; border-radius: 3px; margin-bottom: -7px; color: #4fff00;">
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="row">
+                <h5 class="col-md-6">Outstanding: </h5>
+                <div class="col-md-6">
+                  <h5 style="text-align: right"><span  *ngIf="cartService.paidAmount != null">{{(cartService.total )- cartService.paidAmount | number}} </span> <span  *ngIf="cartService.paidAmount == null">{{cartService.total |number}}</span> Tk</h5>
+                </div>
+              </div>
+              <div class="row" *ngIf="!customerSearch && ((cartService.total)- cartService.paidAmount) > 0 ">
+                <h5 class="col-md-6">Due: </h5>
+                <div class="col-md-6">
+                  <label class="switch switch-label switch-pill switch-primary" style="float: right">
+                    <input  [(ngModel)]="allowDue" (click)="toggleDue()" class="switch-input" type="checkbox">
+                    <span class="switch-slider" data-checked="On" data-unchecked="Off"></span></label>
+                </div>
+              </div>
+              <hr>
+              <div class="row" style="margin-bottom: 10px; min-height: 50px">
+                <div class="col-md-12" style="text-align: center">
+                  <button mat-raised-button
+                          [color]="'success'" style="min-width: 185px"
+                          (click)="newSale(modal)"
+                          [disabled]="(((cartService.total)- cartService.paidAmount) > 0  && !allowDue )||
+                           cartService.paidAmount == null ||
+                           (cartService.paidAmount == 0 && !allowDue)||
+                           cartService.salesItem.length == 0"
+                  >Sale</button>
+                </div>
+              </div>
+<!--              <button class="btn btn-success" (click)="printInvoice(modal)">Print</button>-->
+            </div>
+          </div>
+
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div><!--/.row-->
+</div>
+
+<ngx-smart-modal #modal identifier="myModal" [dismissable] = "false">
+  <div class="d-print-block ">
+    <h4 style="text-align: center"><span>{{storageService.userSession.CompanyName}}</span></h4>
+    <p  style="text-align: center"><span>Invoice No: {{cartService.previousInvoiceNo}} </span></p>
+    <div class="row">
+      <table class="table table-sm">
+        <thead class="thead-light">
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Qty</th>
+          <th>price</th>
+          <th>D-Price</th>
+          <th>Sub</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let item of cartService.soldItems; let i = index ">
+          <td>{{i+1}}</td>
+          <td>{{item.Name}}</td>
+          <td><input class="pos-table-input" style="max-width: 40px" value="{{item.Qty}}" #itemQty (keyup)="updateQty(item.Id, itemQty.value)" ></td>
+          <td><input class="pos-table-input" style="max-width: 50px" value="{{item.SellingPrice}}"  #itemPrice (keyup)="updatePrice(item.Id, itemPrice.value)" (focusout)="updatePriceOnFocusout(item.Id, itemPrice.value)" ></td>
+          <td><input class="pos-table-input" style="max-width: 50px" value="{{item.DiscountPrice}}"  #itemPrice (keyup)="updatePrice(item.Id, itemPrice.value)" (focusout)="updatePriceOnFocusout(item.Id, itemPrice.value)" ></td>
+          <td>{{ getSubtotal(item.DiscountPrice, item.Qty) | number}}</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>Total</td>
+          <td>{{cartService.soldTotal | number}}</td>
+        </tr>
+        </tbody>
+      </table>
+      <P> <span>Total Discount: {{(cartService.soldTotalPreDiscount-cartService.soldTotal) | number }}</span></P>
+    </div>
+  </div>
+</ngx-smart-modal>

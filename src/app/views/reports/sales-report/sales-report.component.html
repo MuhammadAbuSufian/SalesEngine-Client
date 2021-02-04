@@ -1,0 +1,282 @@
+
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-12">
+      <mat-card class="example-card">
+        <mat-card-title><h4  class="card-title">Sales Report</h4></mat-card-title>
+
+        <mat-card-content [ngStyle]="{'display': details? 'none': 'block' }" >
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row">
+                  <div class="col-md-12" >
+                    <div class="row">
+
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="input-group" >
+                          <!--<input type="date" class="form-control" placeholder="">-->
+                          <ng-datepicker  [(ngModel)]="start" style="z-index: 01"></ng-datepicker>
+
+                          <div class="input-group-prepend">
+                            <span  class="input-group-text" style="max-height: 33px">to</span>
+                          </div>
+                          <!--<input type="date" class="form-control" placeholder="">-->
+                          <ng-datepicker   [(ngModel)]="end" style="z-index: 01"></ng-datepicker>
+                          <div class="input-group-append">
+                            <button class="btn btn-outline-success"  style="max-height: 33px" type="button"   (click)="getSales()"><i class="icon-refresh icons "></i></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-3">
+                        <div class="input-group mb-3">
+                          <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Search ..."
+                            aria-label="Recipient's username"
+                            aria-describedby="basic-addon2"
+                            [(ngModel)]="gridRequestModel.Keyword"
+                            (keyup.enter)="search()"
+                          >
+                          <div class="input-group-append">
+                            <button class="btn btn-outline-success" type="button"  (click)="search()" ><i class="icon-magnifier icons "></i></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-3">
+                        <div class="input-group">
+                          <select class="custom-select" [(ngModel)]="gridRequestModel.OrderBy">
+                            <option selected value="">Sort By ...</option>
+                            <option value="InvoiceNo">Invoice No</option>
+                            <option value="Due">Due</option>
+                            <option value="Created">Creation Date</option>
+                          </select>
+                          <select class="custom-select" [(ngModel)]="gridRequestModel.IsAscending">
+                            <option selected value="">Sort Type ...</option>
+                            <option value="True">ASC</option>
+                            <option value="False">DESC</option>
+                          </select>
+                          <div class="input-group-append">
+                            <button class="btn btn-outline-success" type="button"   (click)="getSales()"><i class="icon-refresh icons "></i></button>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div class="row" >
+                      <div class="col-md-10">
+                        <div class="row"  >
+                          <div class="col-6 col-lg-3">
+                            <div class="card">
+                              <div class="card-body p-0 clearfix">
+                                <i class="fa fa-money bg-success p-4  mr-3 float-left"></i>
+                                <div class="h5 text-success mb-0 pt-3">৳ {{totalSales}}</div>
+                                <div class="text-muted text-uppercase font-weight-bold font-xs">Sales Amount</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-6 col-lg-3">
+                            <div class="card">
+                              <div class="card-body p-0 clearfix">
+                                <i class="fa fa-cube bg-primary p-4  mr-3 float-left"></i>
+                                <div class="h5 text-primary mb-0 pt-3">{{salesCount}}</div>
+                                <div class="text-muted text-uppercase font-weight-bold font-xs">Sales Count</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-6 col-lg-3">
+                            <div class="card">
+                              <div class="card-body p-0 clearfix">
+                                <i class="fa fa-money bg-danger p-4  mr-3 float-left"></i>
+                                <div class="h5 text-danger mb-0 pt-3">৳ {{totalDue}}</div>
+                                <div class="text-muted text-uppercase font-weight-bold font-xs">Due</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-6 col-lg-3">
+                            <div class="card">
+                              <div class="card-body p-0 clearfix">
+                                <i class="fa fa-cube bg-warning p-4  mr-3 float-left"></i>
+                                <div class="h5 text-danger mb-0 pt-3">{{dueCount}}</div>
+                                <div class="text-muted text-uppercase font-weight-bold font-xs">Due Count</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-2" *ngIf="storageService.hasPermission(appPermission.journalManegment)" >
+                        <div class="card">
+                          <div class="card-body p-0 clearfix">
+                            <i class="fa fa-money bg-success p-4  mr-3 float-left"></i>
+                            <div class="h5 text-success mb-0 pt-3" style="font-size: 14px">৳ {{profit}}</div>
+                            <div class="text-muted text-uppercase font-weight-bold font-xs">Profit</div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div class="table-responsive">
+                      <table class="table table-hover table-bordered">
+                        <thead class="thead-light">
+                        <tr>
+                          <th scope="col" style="width: 2%; text-align: center;">#</th>
+                          <th scope="col" >Invoice No</th>
+                          <th scope="col" >Customer</th>
+                          <th scope="col" >Date</th>
+                          <th scope="col" >Total Item </th>
+                          <th scope="col" >Due</th>
+                          <th scope="col" >Amount</th>
+                          <th scope="col" >Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let sale of salesList; let i = index">
+                          <td scope="col" style="width: 2%; text-align: center;">{{i+1}}</td>
+                          <td scope="col" >{{sale.InvoiceNo}}</td>
+                          <td scope="col" >
+                            <span *ngIf="sale.Customer != null">{{sale.Customer.Name}}</span>
+                            <span *ngIf="sale.Customer == null">N/A</span>
+                          </td>
+                          <td scope="col">{{sale.Created | date}}</td>
+                          <td scope="col" >{{sale.SalesDetails.length}}</td>
+                          <td scope="col" >{{sale.Due}}</td>
+                          <td scope="col" >{{sale.Amount}}</td>
+                          <td style="min-width: 70px">
+                            <button class="btn btn-info btn-sm" (click)="setView(i)">
+                              <i class="icon-magnifier icons   "></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm"  (click)="setDelete(i)">
+                              <i class="fa fa-ban"></i>
+                            </button>
+                          </td>
+                        </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div>
+                      <ul style="list-style: none">
+                        <li *ngFor="let item of totalRecord | paginate: { itemsPerPage: gridRequestModel.PerPageCount, currentPage:  gridRequestModel.Page }">  </li>
+                      </ul>
+                      <pagination-controls (pageChange)="onPageChange($event)"></pagination-controls>
+                    </div>
+                  </div>
+
+
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+
+        <mat-card-content  *ngIf="details == true">
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row" style="margin-bottom: 20px">
+                <div class="col-md-12">
+                  <button mat-stroked-button color="accent" (click)="backToList()" class="pull-left">Back To List</button>
+                </div>
+              </div>
+              <div class="row">
+
+                <div class="col-md-6" >
+
+                  <mat-form-field class="example-full-width">
+                    <input matInput placeholder="Invoice No" value="{{viewSale.InvoiceNo}}" disabled style="color: black">
+                  </mat-form-field>
+
+                  <mat-form-field class="example-full-width" *ngIf="viewSale.Customer != null">
+                    <input matInput placeholder="Customer" value="{{viewSale.Customer.Name}}" disabled style="color: black">
+                  </mat-form-field>
+
+                  <mat-form-field class="example-full-width">
+                    <input matInput placeholder="Discount" value="{{viewSale.Discount}}" disabled style="color: black">
+                  </mat-form-field>
+
+                  <mat-form-field class="example-full-width">
+                    <input matInput placeholder="Inserted Time" value='{{viewSale.Created | date:"MM/dd/yy"}}' disabled style="color: black">
+                  </mat-form-field>
+
+                </div>
+                <div class="col-md-6" >
+
+                  <mat-form-field class="example-full-width">
+                    <input matInput placeholder="Amount" value="{{viewSale.Amount}}" disabled style="color: black">
+                  </mat-form-field>
+
+                  <mat-form-field class="example-full-width" >
+                    <input matInput placeholder="Due"  [(ngModel)] = "viewSale.Due" style="color: black">
+                  </mat-form-field>
+                  <button *ngIf="due" mat-stroked-button color="primary" (click)="updateDue()" class="pull-right">Due update</button>
+
+                  <mat-form-field class="example-full-width">
+                    <input matInput placeholder="Discount Percentage" value="{{viewSale.DiscountPercent}}" disabled style="color: black">
+                  </mat-form-field>
+
+
+                </div>
+
+              </div>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <table datatable class="row-border hover">
+                  <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Medicine Name</th>
+                    <th>Group</th>
+                    <th>Brand</th>
+                    <th>Qty</th>
+                    <th>Discount</th>
+                    <th>Amount</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr  *ngFor="let salesItem of viewSale.SalesDetails; let i=index">
+                    <td>{{i+1}}</td>
+                    <td>{{salesItem.Product.Name}}</td>
+                    <td>{{salesItem.Product.Group.Name}}</td>
+                    <td>{{salesItem.Product.Brand.Name}}</td>
+                    <td>{{salesItem.Quantity}}</td>
+                    <td>{{(salesItem.Product.SellingPrice * salesItem.Quantity) - (salesItem.Product.DiscountPrice * salesItem.Quantity) }}</td>
+                    <td>{{salesItem.Product.DiscountPrice * salesItem.Quantity }}</td>
+                  </tr>
+                  </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<ngx-smart-modal #deleteConfirmationModal identifier="deleteConfirmationModal">
+  <div class="row">
+    <div class="col-md-12">
+      <h2>Alert!</h2>
+      <p>Are you sure to delete the record? </p>
+    </div>
+  </div>
+  <button mat-raised-button color="accent" (click)="deleteRecord()" class="pull-left">Delete</button>
+  <button mat-stroked-button color="accent" (click)="deleteConfirmationModal.close()" class="pull-right">Close</button>
+</ngx-smart-modal>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

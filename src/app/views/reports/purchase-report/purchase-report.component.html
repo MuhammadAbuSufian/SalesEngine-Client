@@ -1,0 +1,185 @@
+
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-12">
+      <mat-card class="example-card">
+        <mat-card-title><h4  class="card-title">Purchase Report</h4></mat-card-title>
+
+        <mat-card-content [ngStyle]="{'display': details? 'none': 'block' }" >
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row">
+
+                <div class="col-md-12" >
+
+                  <div class="row">
+                    <div class="col-sm-5">
+                      <div class="input-group mb-3">
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Search ..."
+                          aria-label="Recipient's username"
+                          aria-describedby="basic-addon2"
+                          [(ngModel)]="gridRequestModel.Keyword"
+                          (keyup.enter)="search()"
+                        >
+                        <div class="input-group-append">
+                          <button class="btn btn-outline-success" type="button"  (click)="search()" ><i class="icon-magnifier icons "></i></button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-7 mb-3">
+                      <div class="input-group">
+                        <select class="custom-select" [(ngModel)]="gridRequestModel.OrderBy">
+                          <option selected value="">Sort By ...</option>
+                          <option value="Name">Name</option>
+
+                        </select>
+                        <select class="custom-select" [(ngModel)]="gridRequestModel.IsAscending">
+                          <option selected value="">Sort Type ...</option>
+                          <option value="True">ASC</option>
+                          <option value="False">DESC</option>
+                        </select>
+                        <div class="input-group-append">
+                          <button class="btn btn-outline-success" type="button"   (click)="getPurchase()"><i class="icon-refresh icons "></i></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                      <thead class="thead-light">
+                      <tr>
+                        <th scope="col" style="width: 2%; text-align: center;">#</th>
+                        <th scope="col" >Invoice No</th>
+                        <th scope="col" >Date</th>
+                        <th scope="col" >Total Item </th>
+                        <th scope="col" >Amount</th>
+                        <th scope="col" >Actions</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let purchase of purchaseList; let i = index">
+                        <td scope="col" style="width: 2%; text-align: center;">{{i+1}}</td>
+                        <td scope="col" >{{purchase.InvoiceNo}}</td>
+                        <td scope="col">{{purchase.Created | date}}</td>
+                        <td scope="col" >{{purchase.PurchaseDetails.length}}</td>
+                        <td scope="col" >{{purchase.Amount}}</td>
+                        <td style="min-width: 70px">
+                          <button class="btn btn-info btn-sm" (click)="setView(i)">
+                            <i class="icon-magnifier icons   "></i>
+                          </button>
+<!--                          <button class="btn btn-danger btn-sm"  (click)="setDelete(i)">-->
+<!--                            <i class="fa fa-ban"></i>-->
+<!--                          </button>-->
+                        </td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div>
+                    <ul style="list-style: none">
+                      <li *ngFor="let item of totalRecord | paginate: { itemsPerPage: gridRequestModel.PerPageCount, currentPage:  gridRequestModel.Page }">  </li>
+                    </ul>
+                    <pagination-controls (pageChange)="onPageChange($event)"></pagination-controls>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+
+        <mat-card-content  *ngIf="details == true">
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row" style="margin-bottom: 20px">
+                <div class="col-md-12">
+                  <button mat-stroked-button color="accent" (click)="backToList()" class="pull-left">Back To List</button>
+                </div>
+              </div>
+              <div class="row">
+
+                <div class="col-md-6" >
+
+                  <mat-form-field class="example-full-width">
+                    <input matInput placeholder="Invoice No" value="{{viewPurchase.InvoiceNo}}" disabled style="color: black">
+                  </mat-form-field>
+
+                  <mat-form-field class="example-full-width">
+                    <input matInput placeholder="Inserted Time" value='{{viewPurchase.Created | date:"MM/dd/yy"}}' disabled style="color: black">
+                  </mat-form-field>
+
+                </div>
+                <div class="col-md-6" >
+
+                  <mat-form-field class="example-full-width">
+                    <input matInput placeholder="Amount" value="{{viewPurchase.Amount}}" disabled style="color: black">
+                  </mat-form-field>
+
+                </div>
+
+              </div>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <table datatable class="row-border hover">
+                    <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Medicine Name</th>
+                      <th>Group</th>
+                      <th>Brand</th>
+                      <th>Qty</th>
+                      <th>Amount</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr  *ngFor="let purchaseItem of viewPurchase.PurchaseDetails; let i=index">
+                      <td>{{i+1}}</td>
+                      <td>{{purchaseItem.Product.Name}}</td>
+                      <td>{{purchaseItem.Product.Group.Name}}</td>
+                      <td>{{purchaseItem.Product.Brand.Name}}</td>
+                      <td>{{purchaseItem.Quantity}}</td>
+                      <td>{{purchaseItem.Amount}}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<ngx-smart-modal #deleteConfirmationModal identifier="deleteConfirmationModal">
+  <div class="row">
+    <div class="col-md-12">
+      <h2>Alert!</h2>
+      <p>Are you sure to delete the record? </p>
+    </div>
+  </div>
+  <button mat-raised-button color="accent" (click)="deleteRecord()" class="pull-left">Delete</button>
+  <button mat-stroked-button color="accent" (click)="deleteConfirmationModal.close()" class="pull-right">Close</button>
+</ngx-smart-modal>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

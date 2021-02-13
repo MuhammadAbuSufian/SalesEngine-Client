@@ -59,26 +59,6 @@
 
             </div>
 
-            <!--<div class="col-md-3">-->
-              <!--<mat-form-field class="example-full-width">-->
-                <!--<input matInput placeholder="Medicine Group"  (keyup)="getMedicineGroups()" aria-label="medicineGroup" [matAutocomplete]="group" [(ngModel)]="groupName">-->
-                <!--<mat-autocomplete #group="matAutocomplete" (optionSelected)="onSelectionChangedMedicineGroup($event.option.value)">-->
-                  <!--<mat-option *ngFor="let medicineGroup of medicineGroupList " [value]="medicineGroup.Name" >-->
-                    <!--{{ medicineGroup.Name }}-->
-                  <!--</mat-option>-->
-                <!--</mat-autocomplete>-->
-              <!--</mat-form-field>-->
-            <!--</div>-->
-            <!--<div class="col-md-3">-->
-              <!--<mat-form-field class="example-full-width">-->
-                <!--<input matInput placeholder="Company"  (keyup)="getCompany()" aria-label="company" [matAutocomplete]="company" [(ngModel)]="companyName">-->
-                <!--<mat-autocomplete  #company="matAutocomplete" (optionSelected)="onSelectionChangedCompany($event.option.value)">-->
-                  <!--<mat-option *ngFor="let company of companyList " [value]="company.Name" >-->
-                    <!--{{ company.Name }}-->
-                  <!--</mat-option>-->
-                <!--</mat-autocomplete>-->
-              <!--</mat-form-field>-->
-            <!--</div>-->
           </div>
           <div class="row"></div>
           <!--<hr>-->
@@ -197,41 +177,83 @@
 </div>
 
 <ngx-smart-modal #modal identifier="myModal" [dismissable] = "false">
-  <div class="d-print-block ">
-    <h4 style="text-align: center"><span>{{storageService.userSession.CompanyName}}</span></h4>
-    <p  style="text-align: center"><span>Invoice No: {{cartService.previousInvoiceNo}} </span></p>
-    <div class="row">
-      <table class="table table-sm">
-        <thead class="thead-light">
-        <tr>
-          <th>#</th>
-          <th>Name</th>
-          <th>Qty</th>
-          <th>price</th>
-          <th>D-Price</th>
-          <th>Sub</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let item of cartService.soldItems; let i = index ">
-          <td>{{i+1}}</td>
-          <td>{{item.Name}}</td>
-          <td><input class="pos-table-input" style="max-width: 40px" value="{{item.Qty}}" #itemQty (keyup)="updateQty(item.Id, itemQty.value)" ></td>
-          <td><input class="pos-table-input" style="max-width: 50px" value="{{item.SellingPrice}}"  #itemPrice (keyup)="updatePrice(item.Id, itemPrice.value)" (focusout)="updatePriceOnFocusout(item.Id, itemPrice.value)" ></td>
-          <td><input class="pos-table-input" style="max-width: 50px" value="{{item.DiscountPrice}}"  #itemPrice (keyup)="updatePrice(item.Id, itemPrice.value)" (focusout)="updatePriceOnFocusout(item.Id, itemPrice.value)" ></td>
-          <td>{{ getSubtotal(item.DiscountPrice, item.Qty) | number}}</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td>Total</td>
-          <td>{{cartService.soldTotal | number}}</td>
-        </tr>
-        </tbody>
-      </table>
-      <P> <span>Total Discount: {{(cartService.soldTotalPreDiscount-cartService.soldTotal) | number }}</span></P>
+  <div class="d-print-block" style="line-height: 0.6em">
+      <div class="text-center" >
+        <h2>{{storageService.userSession.CompanyName}}</h2>
+        <p>Chandipur kadamtal more, Rajpara, Rajshahi</p>
+        <p>Mob: 01887300984</p>
+      </div>
+      <div class="row">
+        <div class="col-sm-6 text-left">
+          <p>Date: {{today | date: 'd MMM, y, h:mm:ss a'}}<p>
+          <p>Inv: {{cartService.previousInvoiceNo}}</p>
+        </div>
+        <div class="col-sm-6 text-right">
+          <p>Customer: Md. Monoyara</p>
+          <p>User: Mamun</p>
+        </div>
+      </div>
+        <table style="width:100%; border: 1px solid black;">
+          <thead   class="text-right">
+            <tr>
+              <th>SL</th>
+              <th>Product Name</th>
+              <th>Qty</th>
+              <th>Price</th>
+              <th>Dis</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody  class="text-right">
+            <tr  *ngFor="let item of cartService.soldItems; let i = index">
+              <td><small>{{i+1}}</small></td>
+              <td><small>{{item.Name}}</small></td>
+              <td><small>{{item.Qty}}</small></td>
+              <td><small>{{item.SellingPrice | number:'1.2-2'}}</small></td>
+              <td><small>{{(item.SellingPrice - item.DiscountPrice) * item.Qty |  number:'1.2-2'}}</small></td>
+              <td><small>{{ getSubtotal(item.SellingPrice, item.Qty) | number:'1.2-2'}}</small></td>
+            </tr>
+          </tbody>
+        </table>
+
+
+        <div class="row justify-content-between">
+          <div class="col-sm-5 text-right">
+            <br>
+            <p style="line-height: .2em"><small>Total Sale price	:</small></p>
+            <p style="line-height: .2em"><small>Total discount TK	:</small></p>
+            <p style="line-height: .2em"><small>Vat		0%	:</small></p>
+          </div>
+          <div class="col-sm-3 text-right">
+            <br>
+            <p style="line-height: .2em"><small>{{cartService.soldTotal | number:'1.2-2'}}</small></p>
+            <p style="line-height: .2em"><small>-{{ totalDiscount() |  number:'1.2-2' }}</small></p>
+            <p style="line-height: .2em"><small>-00.00</small></p>
+          </div>
+        </div>
+
+
+      <div  style="border: 1px solid #000000; padding: 4px; line-height: .2em;">
+        <div class="row justify-content-between">
+          <div class="col-sm-5 text-right">
+            <p><small>Net Amount :</small></p>
+            <p><small>Paid Amount :</small></p>
+            <p><small>Returned Amount:</small></p>
+          </div>
+          <div class="col-sm-3 text-right">
+            <p><small>{{totalDiscountSales() | number:'1.2-2'}}</small></p>
+            <p><small>{{cartService.soldPaidAmount | number:'1.2-2'}}</small></p>
+            <p><small>{{cartService.soldOutstanding |  number:'1.2-2'}}</small></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-12" style="text-align: center;  width: 100%">
+          <p>Sold items can not be retured.</p> <p> But exchange for 2 days with invoice.</p>
+          <p style="color: #ff0000;">Thanks for shopping at Padma Bazar.</p>
+        </div>
+      </div>
     </div>
-  </div>
+
 </ngx-smart-modal>

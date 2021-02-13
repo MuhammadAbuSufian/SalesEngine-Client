@@ -7,7 +7,7 @@ export const environment = {
   production: false,
   api: {
     Backend : {
-      domain: 'http://localhost/pos-api'
+      domain: 'http://103.121.60.100/pos-api'
     },
     Odi : {
       domain: 'http://localhost/pos-api',

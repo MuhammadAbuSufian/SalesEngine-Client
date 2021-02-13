@@ -86,13 +86,15 @@
               <table class="table table-sm">
                 <thead class="thead-light">
                 <tr>
-                  <th>#</th>
-                  <th>Medicine Name</th>
-                  <th>Group</th>
-                  <th>Company</th>
+                  <th>SL</th>
+                  <th>Product Name</th>
                   <th>Qty</th>
-                  <th>price</th>
-                  <th>Sub</th>
+                  <th>CP</th>
+                  <th>MRP</th>
+                  <th>SP</th>
+                  <th>Offer Tk</th>
+                  <th>Offer Qty</th>
+                  <th>CP Total</th>
                   <th>Action</th>
                 </tr>
                 </thead>
@@ -100,10 +102,12 @@
                 <tr *ngFor="let item of cartService.purchaseItem; let i = index ">
                   <td>{{i+1}}</td>
                   <td>{{item.Name}}</td>
-                  <td>{{item.Group.Name}}</td>
-                  <td>{{item.Brand.Name}}</td>
                   <td><input class="pos-table-input" style="max-width: 40px" value="{{item.Qty}}" #itemQty (keyup)="updateQty(item.Id, itemQty.value)" ></td>
                   <td><input class="pos-table-input" style="max-width: 50px" value="{{item.CostPrice}}"  #itemPrice (keyup)="updatePrice(item.Id, itemPrice.value)" (focusout)="updatePriceOnFocusout(item.Id, itemPrice.value)" ></td>
+                  <td>35</td>
+                  <td>33</td>
+                  <td>20</td>
+                  <td>2</td>
                   <td>{{item.CostPrice * item.Qty}}</td>
                   <td>
                     <button mat-icon-button color="accent" style="margin-top: -5px;" (click)="removeItem(item.Id)">

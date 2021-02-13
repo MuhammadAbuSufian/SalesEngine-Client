@@ -3,7 +3,7 @@ import {MedicineModel} from "../models/medicine.model";
 import {SalesItemModel} from "../models/SalesItem.model";
 
 @Injectable()
-export class CartService{
+export class CartService {
 
   id: string = null;
   salesItem: SalesItemModel[] = [];
@@ -19,6 +19,9 @@ export class CartService{
   profit: number;
   soldTotal: number;
   soldTotalPreDiscount: number;
+  soldOutstanding: number;
+  soldPaidAmount: number;
+
   emptyCart(){
     this.id = null;
     this.salesItem = [];

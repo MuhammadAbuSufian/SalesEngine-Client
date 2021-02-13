@@ -20,7 +20,7 @@ import {AccountService} from '../../../services/account.service';
 })
 export class NewSalesComponent {
 
-  medicineList: MedicineModel[] = []
+  medicineList: MedicineModel[] = [];
   searchKey: string;
   groupKey: string;
   companyKey: string;
@@ -33,6 +33,9 @@ export class NewSalesComponent {
   medicineGroupList: {Id: string, Name: string}[] = [];
   companyList:  {Id: string, Name: string}[] = [];
   customerList: CustomerModel[] = [];
+  today: number = Date.now();
+
+
 
   constructor(private medicineService: MedicineService,
               private medicineGroupService: MedicineGroupService,
@@ -43,23 +46,25 @@ export class NewSalesComponent {
               private customerService: CustomerService,
               public storageService: StorageService,
               private accountService: AccountService
-  ) {}
+  ) {
+
+  }
 
 
   ngOnInit() {
    this.getMedicine();
   }
 
-  ngDoCheck(){
+  ngDoCheck () {
     let newTotal = 0;
     let newDiscount = 0;
     let preDiscountTotal = 0;
-    this.cartService.salesItem.forEach((item)=>{
+    this.cartService.salesItem.forEach((item)=> {
       preDiscountTotal = preDiscountTotal + (item.SellingPrice * item.Qty);
-      if(this.storageService.userSession.Pharmacy){
+      if(this.storageService.userSession.Pharmacy) {
         newTotal = newTotal + (item.SellingPrice * item.Qty);
       }
-      if(this.storageService.userSession.SuperShop){
+      if(this.storageService.userSession.SuperShop) {
         newTotal = newTotal + (item.DiscountPrice * item.Qty);
       }
       newDiscount = newDiscount + (item.Discount * item.Qty);
@@ -67,43 +72,38 @@ export class NewSalesComponent {
     this.cartService.total = newTotal;
     this.soldTotalPreDiscount = preDiscountTotal;
     this.cartService.totalDiscount = newDiscount;
-
-    console.log('pre sold total' + this.cartService.soldTotalPreDiscount)
   }
 
-  getMedicine(){
+  getMedicine() {
     this.medicineService.viewMedicines(this.searchKey, this.groupKey, this.companyKey).subscribe((res)=> {
       this.medicineList = res;
-      if(this.searchKey.length>5 && this.medicineList.length == 1){
-        this.onSelectionChangedMedicine(this.medicineList[0].Name)
+      if(this.searchKey.length>5 && this.medicineList.length === 1) {
+        this.onSelectionChangedMedicine(this.medicineList[0].Name);
         this.medicineList = [];
         this.searchKey = '';
       }
-    })
+    });
   }
-  getMedicineCheck(){
+  getMedicineCheck() {
     if(this.searchKey.length>5){
       this.getMedicine();
     }
   }
-  getCustomer(){
-    console.log(this.customerKey)
+  getCustomer() {
     this.customerService.getCustomerTypeAhead(this.customerKey).subscribe((res)=> {
       this.customerList = res;
-    })
+    });
   }
 
-  onSelectionChangedMedicine(value){
-    console.log('checkking----->'+value)
+  onSelectionChangedMedicine(value) {
     this.medicineList.forEach((medicine)=>{
-      if(medicine.Name == value){
+      if(medicine.Name === value) {
         let salesItem: any = medicine;
-        console.log(salesItem.Stock)
         if(salesItem.Stock < 1){
-          this.notificationService.warn('Warning', 'Empty stock')
-        }else{
+          this.notificationService.warn('Warning', 'Empty stock');
+        } else {
           salesItem.Qty = 1;
-          if(salesItem.Qty > salesItem.Stock){
+          if(salesItem.Qty > salesItem.Stock) {
             salesItem.Qty = salesItem.Stock;
           }
           salesItem.Discount = 0;
@@ -112,12 +112,12 @@ export class NewSalesComponent {
           salesItem.staticCostPrice = salesItem.CostPrice;
           salesItem.staticSellPrice = salesItem.SellingPrice;
           let avoid = false;
-          this.cartService.salesItem.forEach((item)=>{
-            if(item.Id == medicine.Id){
+          this.cartService.salesItem.forEach((item)=> {
+            if(item.Id === medicine.Id) {
               avoid = true;
             }
-          })
-          if(avoid == false){
+          });
+          if(avoid === false) {
             this.cartService.salesItem.push(salesItem);
           }
         }
@@ -185,7 +185,7 @@ export class NewSalesComponent {
   newSale(modal){
     let outstandingAmount = (this.cartService.total - this.cartService.totalDiscount) - this.cartService.paidAmount;
 
-    if(outstandingAmount <= 0 || this.allowDue){
+    if(outstandingAmount <= 0 || this.allowDue) {
       this.cartService.status = 1;
       this.cartService.due = 0;
       if(this.cartService.total > this.cartService.paidAmount){
@@ -196,6 +196,8 @@ export class NewSalesComponent {
         this.cartService.soldItems = this.cartService.salesItem;
         this.cartService.soldTotal = this.cartService.total;
         this.cartService.soldTotalPreDiscount = this.soldTotalPreDiscount;
+        this.cartService.soldOutstanding = outstandingAmount;
+        this.cartService.soldPaidAmount = this.cartService.paidAmount;
         this.cartService.emptyCart();
         // this.notificationService.success('Success', res.msg)
         this.cartService.previousInvoiceNo = res;
@@ -287,6 +289,7 @@ export class NewSalesComponent {
             item.SellingPrice = newPrice;
             item.Discount = calculatedDiscount;
             item.DiscountPer = newPerDiscount;
+
           }
         }
 
@@ -351,4 +354,19 @@ export class NewSalesComponent {
     },1000)
   }
 
+  totalDiscount(): number {
+    let discount = 0;
+    this.cartService.soldItems.forEach((soldItem) => {
+      discount += soldItem.SellingPrice * soldItem.Qty - soldItem.DiscountPrice * soldItem.Qty;
+    });
+    return discount;
+  }
+
+  totalDiscountSales(): number {
+    let sales = 0;
+    this.cartService.soldItems.forEach((soldItem)=>{
+      sales += soldItem.DiscountPrice * soldItem.Qty;
+    });
+    return sales;
+  }
 }

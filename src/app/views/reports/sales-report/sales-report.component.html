@@ -139,7 +139,7 @@
                             <span *ngIf="sale.Customer != null">{{sale.Customer.Name}}</span>
                             <span *ngIf="sale.Customer == null">N/A</span>
                           </td>
-                          <td scope="col">{{sale.Created | date}}</td>
+                          <td scope="col">{{sale.Created | date: 'd MMM, y, h:mm:ss a'}}</td>
                           <td scope="col" >{{sale.SalesDetails.length}}</td>
                           <td scope="col" >{{sale.Due}}</td>
                           <td scope="col" >{{sale.Amount}}</td>

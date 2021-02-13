@@ -16,7 +16,7 @@ import {AccountService} from '../../../services/account.service';
 })
 export class NewPurchaseComponent {
 
-  medicineList: MedicineModel[] = []
+  medicineList: MedicineModel[] = [];
   searchKey: string;
   groupKey: string;
   companyKey: string;
@@ -62,22 +62,21 @@ export class NewPurchaseComponent {
   getMedicine(){
     this.medicineService.viewMedicines(this.searchKey, this.groupKey, this.companyKey).subscribe((res)=> {
       this.medicineList = res;
-      if(this.searchKey.length>5 && this.medicineList.length == 1){
-        this.onSelectionChangedMedicine(this.medicineList[0].Name)
+      if(this.searchKey.length>5 && this.medicineList.length == 1) {
+        this.onSelectionChangedMedicine(this.medicineList[0].Name);
         this.medicineList = [];
         this.searchKey = '';
       }
-    })
+    });
   }
-  getMedicineCheck(){
-    if(this.searchKey.length>5){
+  getMedicineCheck() {
+    if(this.searchKey.length>5) {
       this.getMedicine();
     }
   }
-  onSelectionChangedMedicine(value){
-    console.log(value)
+  onSelectionChangedMedicine(value) {
     this.medicineList.forEach((medicine)=>{
-      if(medicine.Name == value){
+      if(medicine.Name == value) {
         let salesItem: any = medicine;
         salesItem.Qty = 1;
         salesItem.Discount = 0;
@@ -89,14 +88,14 @@ export class NewPurchaseComponent {
           if(item.Id == medicine.Id){
             avoid = true;
           }
-        })
-        if(avoid == false){
+        });
+        if(avoid == false) {
           this.cartService.purchaseItem.push(salesItem);
         }
         // this.searchKey = '';
       }
     });
-    setTimeout(()=>{
+    setTimeout(()=> {
       this.searchKey = '';
       this.updateCart();
     },500);
@@ -158,7 +157,7 @@ export class NewPurchaseComponent {
       if(item.Id == currentItemId){
         item.Qty = newQty;
       }
-    })
+    });
     this.updateCart();
   }
 
@@ -227,7 +226,7 @@ export class NewPurchaseComponent {
         }
 
       }
-    })
+    });
   }
 
 

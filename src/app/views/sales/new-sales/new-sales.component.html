@@ -177,21 +177,21 @@
 </div>
 
 <ngx-smart-modal #modal identifier="myModal" [dismissable] = "false">
-  <div class="d-print-block" style="line-height: 0.6em">
+  <div class="d-print-block" >
       <div class="text-center" >
         <h2>{{storageService.userSession.CompanyName}}</h2>
-        <p>Chandipur kadamtal more, Rajpara, Rajshahi</p>
-        <p>Mob: 01887300984</p>
+        <p style="line-height: .2em;">Chandipur kadamtal more, Rajpara, Rajshahi</p>
+        <p style="line-height: .2em;">Mob: 01887300984</p>
       </div>
       <div class="row">
         <div class="col-sm-6 text-left">
-          <p>Date: {{today | date: 'd MMM, y, h:mm:ss a'}}<p>
-          <p>Inv: {{cartService.previousInvoiceNo}}</p>
+          <p style="line-height: .2em;">Date: {{today | date: 'd MMM, y, h:mm:ss a'}}<p>
+          <p style="line-height: .2em;">Inv: {{cartService.previousInvoiceNo}}</p>
         </div>
-        <div class="col-sm-6 text-right">
-          <p>Customer: Md. Monoyara</p>
-          <p>User: Mamun</p>
-        </div>
+<!--        <div class="col-sm-6 text-right">-->
+<!--          <p>Customer: Md. Monoyara</p>-->
+<!--          <p>User: Mamun</p>-->
+<!--        </div>-->
       </div>
         <table style="width:100%; border: 1px solid black;">
           <thead   class="text-right">
@@ -217,30 +217,32 @@
         </table>
 
 
-        <div class="row justify-content-between">
-          <div class="col-sm-5 text-right">
+        <div class="row">
+
+          <div class="col text-right">
             <br>
             <p style="line-height: .2em"><small>Total Sale price	:</small></p>
             <p style="line-height: .2em"><small>Total discount TK	:</small></p>
             <p style="line-height: .2em"><small>Vat		0%	:</small></p>
           </div>
-          <div class="col-sm-3 text-right">
+          <div class="col text-right">
             <br>
             <p style="line-height: .2em"><small>{{cartService.soldTotal | number:'1.2-2'}}</small></p>
             <p style="line-height: .2em"><small>-{{ totalDiscount() |  number:'1.2-2' }}</small></p>
             <p style="line-height: .2em"><small>-00.00</small></p>
           </div>
+
         </div>
 
 
       <div  style="border: 1px solid #000000; padding: 4px; line-height: .2em;">
-        <div class="row justify-content-between">
-          <div class="col-sm-5 text-right">
+        <div class="row">
+          <div class="col text-right">
             <p><small>Net Amount :</small></p>
             <p><small>Paid Amount :</small></p>
             <p><small>Returned Amount:</small></p>
           </div>
-          <div class="col-sm-3 text-right">
+          <div class="col text-right">
             <p><small>{{totalDiscountSales() | number:'1.2-2'}}</small></p>
             <p><small>{{cartService.soldPaidAmount | number:'1.2-2'}}</small></p>
             <p><small>{{cartService.soldOutstanding |  number:'1.2-2'}}</small></p>
@@ -249,7 +251,7 @@
       </div>
 
       <div class="row">
-        <div class="col-sm-12" style="text-align: center;  width: 100%">
+        <div class="col-sm-12" style="text-align: center;  width: 100%; line-height: .2em;">
           <p>Sold items can not be retured.</p> <p> But exchange for 2 days with invoice.</p>
           <p style="color: #ff0000;">Thanks for shopping at Padma Bazar.</p>
         </div>

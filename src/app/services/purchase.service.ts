@@ -11,18 +11,16 @@ export class PurchaseService{
 
   constructor(private http: HttpClientService, private cartService: PurchaseCartService) { }
 
-
-  newPurchase(){
+  newPurchase() {
     return this.http.post(environment.api.Backend.domain + '/api/purchase/save', this.cartService);
   }
 
-  getPurchase(data){
-    return this.http.post(environment.api.Backend.domain + '/api/purchase/get', data);
+  getPurchase(data, startDate, endDate) {
+    return this.http.post(environment.api.Backend.domain + '/api/purchase/report?startDate=' + startDate + '&endDate=' + endDate, data);
   }
 
   returnPurchase(invoiceNo){
     return this.http.delete(environment.api.Backend.domain + '/api/purhcase/movetrash?id=' + invoiceNo);
-
   }
 
 }

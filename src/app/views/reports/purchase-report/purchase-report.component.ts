@@ -3,13 +3,9 @@
 
 import {Component, OnInit, ViewChild} from "@angular/core";
 import {DataTableDirective} from "angular-datatables";
-import {Subject} from "rxjs/Subject";
 import {NotificationsService} from "angular2-notifications";
 import {HttpClient} from "@angular/common/http";
 import {NgxSmartModalService} from "ngx-smart-modal";
-import {SaleModel} from "../../../models/saleModel";
-import {SalesService} from "../../../services/sales.service";
-import {PurchaseModel} from "../../../models/purchaseModel";
 import {PurchaseService} from "../../../services/purchase.service";
 import {GridRequestModel} from '../../../models/grid.request.model';
 import {PurchaseViewModel} from '../../../view-model/purchase.view.model';
@@ -23,16 +19,20 @@ export class PurchaseReportComponent implements OnInit {
 
   purchaseList: PurchaseViewModel[] = [];
   viewPurchase: PurchaseViewModel = new PurchaseViewModel();
-  details: boolean = false;
-
+  details = false;
+  start = new Date(Date.now());
+  end = new Date(Date.now());
   totalRecord = [];
+  totalPurchase = 0;
+  purchaseCount = 0;
+
   gridRequestModel: GridRequestModel = new GridRequestModel();
   constructor(
     private notificationService: NotificationsService,
     private http: HttpClient,
     public ngxSmartModalService: NgxSmartModalService,
     private purchaseService: PurchaseService,
-  ){
+  ) {
 
   }
 
@@ -40,27 +40,31 @@ export class PurchaseReportComponent implements OnInit {
     this.getPurchase();
   }
 
-  getPurchase(){
+  getPurchase() {
+    const startDate = this.start.getFullYear() + '-' + (this.start.getMonth()+1) + '-' + this.start.getDate();
+    const endDate = this.end.getFullYear() + '-' + (this.end.getMonth() + 1) + '-' + this.end.getDate();
     this.purchaseService.getPurchase(
-      this.gridRequestModel).subscribe((res)=>{
+      this.gridRequestModel, startDate, endDate).subscribe((res)=> {
       this.purchaseList = res.Data;
       this.totalRecord = Array(res.Count).fill(0);
-    })
+      this.totalPurchase = res.Value;
+      this.purchaseCount = res.Count;
+    });
   }
 
 
-  setView(index){
+  setView(index) {
     this.viewPurchase = this.purchaseList[index];
     this.details = true;
   }
 
-  backToList(){
+  backToList() {
     this.viewPurchase = new PurchaseViewModel();
     this.details = false;
 
   }
 
-  setDelete(index){
+  setDelete(index) {
     this.viewPurchase = this.purchaseList[index];
     this.ngxSmartModalService.getModal('deleteConfirmationModal').open();
   }
@@ -69,7 +73,7 @@ export class PurchaseReportComponent implements OnInit {
   deleteRecord() {
 
     this.purchaseService.returnPurchase(this.viewPurchase.Id).subscribe((res) => {
-      if (res.success == true) {
+      if (res.success === true) {
         this.viewPurchase = new PurchaseViewModel();
 
         this.ngxSmartModalService.getModal('deleteConfirmationModal').close();
@@ -81,12 +85,12 @@ export class PurchaseReportComponent implements OnInit {
   }
 
   onPageChange(number: number) {
-    console.log('change to page', number);
+
     this.gridRequestModel.Page = number;
     this.getPurchase();
   }
 
-  search(){
+  search() {
     this.gridRequestModel.Page = 1;
     this.getPurchase();
   }

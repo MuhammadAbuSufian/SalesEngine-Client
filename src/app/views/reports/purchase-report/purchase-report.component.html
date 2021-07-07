@@ -8,45 +8,105 @@
         <mat-card-content [ngStyle]="{'display': details? 'none': 'block' }" >
           <div class="row">
             <div class="col-md-12">
-              <div class="row">
 
-                <div class="col-md-12" >
+              <div class="row">
+                <div class="col-md-12">
 
                   <div class="row">
-                    <div class="col-sm-5">
+                    <div class="col-md-6">
+                      <div class="input-group" >
+                        <!--<input type="date" class="form-control" placeholder="">-->
+                        <ng-datepicker  [(ngModel)]="start" style="z-index: 01"></ng-datepicker>
+
+                        <div class="input-group-prepend">
+                          <span  class="input-group-text" style="max-height: 33px">to</span>
+                        </div>
+                        <!--<input type="date" class="form-control" placeholder="">-->
+                        <ng-datepicker   [(ngModel)]="end" style="z-index: 01"></ng-datepicker>
+                        <div class="input-group-append">
+                          <button class="btn btn-outline-success"  style="max-height: 33px" type="button"  (click)="getPurchase()" ><i class="icon-refresh icons "></i></button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-3">
                       <div class="input-group mb-3">
                         <input
                           type="text"
                           class="form-control"
-                          placeholder="Search ..."
+                          placeholder="Search ...."
                           aria-label="Recipient's username"
                           aria-describedby="basic-addon2"
                           [(ngModel)]="gridRequestModel.Keyword"
-                          (keyup.enter)="search()"
+                          (keyup)="search()"
                         >
                         <div class="input-group-append">
-                          <button class="btn btn-outline-success" type="button"  (click)="search()" ><i class="icon-magnifier icons "></i></button>
+                          <button class="btn btn-outline-success" type="button" (click)="search()"  ><i class="icon-magnifier icons "></i></button>
                         </div>
                       </div>
                     </div>
-                    <div class="col-sm-7 mb-3">
+                    <div class="col-sm-3">
                       <div class="input-group">
-                        <select class="custom-select" [(ngModel)]="gridRequestModel.OrderBy">
+                        <select class="custom-select" [(ngModel)]="gridRequestModel.OrderBy" >
                           <option selected value="">Sort By ...</option>
-                          <option value="Name">Name</option>
-
+                          <option value="InvoiceNo">Invoice No</option>
+                          <option value="Due">Due</option>
+                          <option value="Created">Creation Date</option>
                         </select>
-                        <select class="custom-select" [(ngModel)]="gridRequestModel.IsAscending">
+                        <select class="custom-select" [(ngModel)]="gridRequestModel.IsAscending" >
                           <option selected value="">Sort Type ...</option>
                           <option value="True">ASC</option>
                           <option value="False">DESC</option>
                         </select>
                         <div class="input-group-append">
-                          <button class="btn btn-outline-success" type="button"   (click)="getPurchase()"><i class="icon-refresh icons "></i></button>
+                          <button class="btn btn-outline-success" type="button" (click)="getPurchase()"><i class="icon-refresh icons "></i></button>
                         </div>
                       </div>
                     </div>
+
                   </div>
+                  <div class="row" >
+                    <div class="col-md-10">
+                      <div class="row"  >
+                        <div class="col-6 col-lg-3">
+                          <div class="card">
+                            <div class="card-body p-0 clearfix">
+                              <i class="fa fa-money bg-success p-4  mr-3 float-left"></i>
+                              <div class="h5 text-success mb-0 pt-3">৳ {{totalPurchase}} </div>
+                              <div class="text-muted text-uppercase font-weight-bold font-xs">Purchase Amount</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                          <div class="card">
+                            <div class="card-body p-0 clearfix">
+                              <i class="fa fa-cube bg-primary p-4  mr-3 float-left"></i>
+                              <div class="h5 text-primary mb-0 pt-3">৳ {{purchaseCount}}</div>
+                              <div class="text-muted text-uppercase font-weight-bold font-xs">Purchase Count</div>
+                            </div>
+                          </div>
+                        </div>
+<!--                        <div class="col-6 col-lg-3">-->
+<!--                          <div class="card">-->
+<!--                            <div class="card-body p-0 clearfix">-->
+<!--                              <i class="fa fa-money bg-danger p-4  mr-3 float-left"></i>-->
+<!--                              <div class="h5 text-danger mb-0 pt-3">৳ totalDue</div>-->
+<!--                              <div class="text-muted text-uppercase font-weight-bold font-xs">Due</div>-->
+<!--                            </div>-->
+<!--                          </div>-->
+<!--                        </div>-->
+<!--                        <div class="col-6 col-lg-3">-->
+<!--                          <div class="card">-->
+<!--                            <div class="card-body p-0 clearfix">-->
+<!--                              <i class="fa fa-cube bg-warning p-4  mr-3 float-left"></i>-->
+<!--                              <div class="h5 text-danger mb-0 pt-3">due Count</div>-->
+<!--                              <div class="text-muted text-uppercase font-weight-bold font-xs">Due Count</div>-->
+<!--                            </div>-->
+<!--                          </div>-->
+<!--                        </div>-->
+                      </div>
+                    </div>
+                  </div>
+
                   <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                       <thead class="thead-light">
@@ -63,16 +123,16 @@
                       <tr *ngFor="let purchase of purchaseList; let i = index">
                         <td scope="col" style="width: 2%; text-align: center;">{{i+1}}</td>
                         <td scope="col" >{{purchase.InvoiceNo}}</td>
-                        <td scope="col">{{purchase.Created | date}}</td>
+                        <td scope="col">{{purchase.Created | date: 'd MMM, y, h:mm:ss a' }}</td>
                         <td scope="col" >{{purchase.PurchaseDetails.length}}</td>
                         <td scope="col" >{{purchase.Amount}}</td>
                         <td style="min-width: 70px">
                           <button class="btn btn-info btn-sm" (click)="setView(i)">
-                            <i class="icon-magnifier icons   "></i>
+                            <i class="icon-magnifier icons"></i>
                           </button>
-<!--                          <button class="btn btn-danger btn-sm"  (click)="setDelete(i)">-->
-<!--                            <i class="fa fa-ban"></i>-->
-<!--                          </button>-->
+                          <!--                          <button class="btn btn-danger btn-sm"  (click)="setDelete(i)">-->
+                          <!--                            <i class="fa fa-ban"></i>-->
+                          <!--                          </button>-->
                         </td>
                       </tr>
                       </tbody>

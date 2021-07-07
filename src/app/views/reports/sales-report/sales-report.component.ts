@@ -55,9 +55,9 @@ export class SalesReportComponent implements OnInit {
     this.getSales();
   }
 
-  getSales(){
-    let startDate = this.start.getFullYear() + '-' + (this.start.getMonth()+1) + '-' + this.start.getDate();
-    let endDate = this.end.getFullYear() + '-' + (this.end.getMonth()+1) + '-' + (this.end.getDate());
+  getSales() {
+    const startDate = this.start.getFullYear() + '-' + (this.start.getMonth()+1) + '-' + this.start.getDate();
+    const endDate = this.end.getFullYear() + '-' + (this.end.getMonth()+1) + '-' + (this.end.getDate());
     this.salesService.getSales(this.gridRequestModel, startDate, endDate).subscribe((res)=>{
       this.salesList = res.Data;
       this.totalRecord = Array(res.Count).fill(0);
